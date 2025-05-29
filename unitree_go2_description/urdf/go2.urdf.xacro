@@ -1,0 +1,230 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:macro name="insert_go2_robot" params="is_sim">
+        <xacro:include filename="$(find unitree_go2_description)/urdf/common/insert_inertia.urdf.xacro"/>
+
+        <link name="base_link">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://unitree_go2_description/meshes/visual/base_link.dae" scale="1 1 1"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://unitree_go2_description/meshes/collision/base_link.stl" scale="1 1 1"/>
+                </geometry>
+            </collision>
+            <inertial>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <mass value="1.0"/>
+                <inertia ixx="0.1" ixy="0" ixz="0" iyy="0.1" iyz="0" izz="0.1"/>
+            </inertial>
+        </link>
+
+        <xacro:macro name="insert_leg" params="prefix1 prefix2 dir1 dir2 *origin">
+            <link name="${prefix1}${prefix2}_hip">
+                <visual>
+                    <origin xyz="0 0 0" rpy="0 ${dir2*pi/2} ${dir1*pi/2}"/>
+                    <geometry>
+                        <mesh filename="package://unitree_go2_description/meshes/visual/hip.dae" scale="1 1 1"/>
+                    </geometry>
+                </visual>
+                <collision>
+                    <origin xyz="0 0 0" rpy="${dir1*pi/2} ${dir2*pi} 0"/>
+                    <geometry>
+                        <mesh filename="package://unitree_go2_description/meshes/collision/hip.stl" scale="1 1 1"/>
+                    </geometry>
+                </collision>
+                <inertial>
+                    <origin xyz="0 0 0" rpy="0 0 0"/>
+                    <mass value="1.0"/>
+                    <inertia ixx="0.1" ixy="0" ixz="0" iyy="0.1" iyz="0" izz="0.1"/>
+                </inertial>
+            </link>
+
+            <joint name="${prefix1}${prefix2}_hip_joint" type="revolute">
+                <parent link="base_link"/>
+                <child link="${prefix1}${prefix2}_hip"/>
+                <xacro:insert_block name="origin"/>
+                <axis xyz="1 0 0"/>
+                <limit effort="1000" velocity="1.0" lower="${-60/180*pi}" upper="${60/180*pi}"/>
+            </joint>
+
+            <link name="${prefix1}${prefix2}_thigh">
+                <visual>
+                    <origin xyz="0 0 0" rpy="0 0 0"/>
+                    <geometry>
+                        <mesh filename="package://unitree_go2_description/meshes/visual/${prefix2}_thigh.dae" scale="1 1 1"/>
+                    </geometry>
+                </visual>
+                <collision>
+                    <origin xyz="0 0 0" rpy="0 0 0"/>
+                    <geometry>
+                        <mesh filename="package://unitree_go2_description/meshes/collision/${prefix2}_thigh.stl" scale="1 1 1"/>
+                    </geometry>
+                </collision>
+                <inertial>
+                    <origin xyz="0 0 0" rpy="0 0 0"/>
+                    <mass value="1.0"/>
+                    <inertia ixx="0.1" ixy="0" ixz="0" iyy="0.1" iyz="0" izz="0.1"/>
+                </inertial>
+            </link>
+
+            <joint name="${prefix1}${prefix2}_thigh_joint" type="revolute">
+                <parent link="${prefix1}${prefix2}_hip"/>
+                <child link="${prefix1}${prefix2}_thigh"/>
+                <origin xyz="${dir1*0.0705} ${dir1*dir2*0.023} 0" rpy="0 0 0"/>
+                <axis xyz="0 1 0"/>
+                <limit effort="1000" velocity="1.0" lower="${-60/180*pi}" upper="${60/180*pi}"/>
+            </joint>
+
+            <link name="${prefix1}${prefix2}_calf">
+                <visual>
+                    <origin xyz="0 0 0" rpy="0 0 0"/>
+                    <geometry>
+                        <mesh filename="package://unitree_go2_description/meshes/visual/${prefix2}_calf.dae" scale="1 1 1"/>
+                    </geometry>
+                </visual>
+                <collision>
+                    <origin xyz="0 0 0" rpy="0 0 0"/>
+                    <geometry>
+                        <mesh filename="package://unitree_go2_description/meshes/collision/${prefix2}_calf.stl" scale="1 1 1"/>
+                    </geometry>
+                </collision>
+                <inertial>
+                    <origin xyz="0 0 0" rpy="0 0 0"/>
+                    <mass value="1.0"/>
+                    <inertia ixx="0.1" ixy="0" ixz="0" iyy="0.1" iyz="0" izz="0.1"/>
+                </inertial>
+            </link>
+
+            <joint name="${prefix1}${prefix2}_calf_joint" type="revolute">
+                <parent link="${prefix1}${prefix2}_thigh"/>
+                <child link="${prefix1}${prefix2}_calf"/>
+                <origin xyz="0 ${dir1*dir2*0.056} -0.213" rpy="0 0 0"/>
+                <axis xyz="0 1 0"/>
+                <limit effort="1000" velocity="1.0" lower="${-60/180*pi}" upper="${60/180*pi}"/>
+            </joint>
+
+            <link name="${prefix1}${prefix2}_foot">
+                <visual>
+                    <origin xyz="0 0 0" rpy="0 0 0"/>
+                    <geometry>
+                        <mesh filename="package://unitree_go2_description/meshes/visual/foot.dae" scale="1 1 1"/>
+                    </geometry>
+                </visual>
+                <collision>
+                    <origin xyz="0 0 0" rpy="0 0 0"/>
+                    <geometry>
+                        <mesh filename="package://unitree_go2_description/meshes/collision/foot.stl" scale="1 1 1"/>
+                    </geometry>
+                </collision>
+                <inertial>
+                    <origin xyz="0 0 0" rpy="0 0 0"/>
+                    <mass value="1.0"/>
+                    <inertia ixx="0.1" ixy="0" ixz="0" iyy="0.1" iyz="0" izz="0.1"/>
+                </inertial>
+            </link>
+
+            <joint name="${prefix1}${prefix2}_foot_fixed_joint" type="fixed">
+                <parent link="${prefix1}${prefix2}_calf"/>
+                <child link="${prefix1}${prefix2}_foot"/>
+                <origin xyz="-0.0025 0 -0.2093" rpy="0 ${32/180*pi} 0"/>
+            </joint>
+        </xacro:macro>
+
+        <xacro:insert_leg prefix1="f" prefix2="l" dir1="1" dir2="1">
+            <origin xyz="0.124 0.0465 0" rpy="0 0 0"/>
+        </xacro:insert_leg>
+        <xacro:insert_leg prefix1="f" prefix2="r" dir1="1" dir2="-1">
+            <origin xyz="0.124 -0.0465 0" rpy="0 0 0"/>
+        </xacro:insert_leg>
+        <xacro:insert_leg prefix1="r" prefix2="l" dir1="-1" dir2="-1">
+            <origin xyz="-0.124 0.0465 0" rpy="0 0 0"/>
+        </xacro:insert_leg>
+        <xacro:insert_leg prefix1="r" prefix2="r" dir1="-1" dir2="1">
+            <origin xyz="-0.124 -0.0465 0" rpy="0 0 0"/>
+        </xacro:insert_leg>
+
+        <link name="expansion_dock">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://unitree_go2_description/meshes/visual/expansion_dock.dae" scale="1 1 1"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://unitree_go2_description/meshes/collision/expansion_dock.stl" scale="1 1 1"/>
+                </geometry>
+            </collision>
+            <inertial>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <mass value="1.0"/>
+                <inertia ixx="0.1" ixy="0" ixz="0" iyy="0.1" iyz="0" izz="0.1"/>
+            </inertial>
+        </link>
+
+        <joint name="expansion_dock_mount_fixed_joint" type="fixed">
+            <parent link="base_link"/>
+            <child link="expansion_dock"/>
+            <origin xyz="-0.083 0 0.057" rpy="0 0 0"/>
+        </joint>
+
+        <link name="front_lidar_mount_link">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://unitree_go2_description/meshes/visual/l1_lidar.dae" scale="1 1 1"/>
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://unitree_go2_description/meshes/collision/l1_lidar.stl" scale="1 1 1"/>
+                </geometry>
+            </collision>
+            <inertial>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <mass value="1.0"/>
+                <inertia ixx="0.1" ixy="0" ixz="0" iyy="0.1" iyz="0" izz="0.1"/>
+            </inertial>
+        </link>
+
+        <joint name="front_lidar_rotate_joint" type="continuous">
+            <parent link="base_link"/>
+            <child link="front_lidar_mount_link"/>
+            <origin xyz="0.2896 0 -0.0455" rpy="0 ${-195/180*pi} 0"/>
+            <axis xyz="0 0 1"/>
+        </joint>
+
+        <link name="font_lidar_link"/>
+
+        <joint name="front_lidar_mount_joint" type="continuous">
+            <parent link="front_lidar_mount_link"/>
+            <child link="font_lidar_link"/>
+            <origin xyz="0 0 0.016" rpy="0 0 0"/>
+            <axis xyz="0 0 1"/>
+        </joint>
+
+        <link name="front_camera_link"/>
+
+        <joint name="front_camera_mount_fixed_joint" type="fixed">
+            <parent link="base_link"/>
+            <child link="front_camera_link"/>
+            <origin xyz="0.326 0 0.043" rpy="0 0 0"/>
+        </joint>
+
+        <link name="payload_mount_link"/>
+
+        <joint name="payload_mount_fixed_joint" type="fixed">
+            <parent link="expansion_dock"/>
+            <child link="payload_mount_link"/>
+            <origin xyz="0.083 0 0.0285" rpy="0 0 0"/>
+        </joint>
+
+    </xacro:macro>
+</robot>

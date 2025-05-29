@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="go2">
+    <xacro:include filename="$(find unitree_go2_description)/urdf/go2.urdf.xacro"/>
+    <xacro:insert_go2_robot is_sim="true"/>
+</robot>
